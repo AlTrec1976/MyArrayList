@@ -139,7 +139,7 @@
                 int tmpValue = _array[i];
                 for (j = i - 1; j >= 0; j--)
                 {
-                    if (_array[j] < tmpValue)
+                    if (_array[j] <= tmpValue)
                     {
                         break;
                     }
