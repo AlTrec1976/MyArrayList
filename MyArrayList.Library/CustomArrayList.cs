@@ -200,7 +200,7 @@ namespace MyArrayList.Library
                         tmpInd = tmpInd < 0 ? 0 : tmpInd;
                         lists[0].Add(_array[j]);
                         
-                        while (tmpInd > 0 && _array[j] < lists[0][tmpInd-1].GetHashCode())
+                        while (tmpInd > 0 && _array[j] <= lists[0][tmpInd-1].GetHashCode())
                         {
                             var tempVar = lists[0][tmpInd].GetHashCode();
                             lists[0][tmpInd + 1] = tempVar;
