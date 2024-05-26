@@ -37,6 +37,6 @@ arrayList.Add(21);
 arrayList.Add(22);
 arrayList.Add(26);
 arrayList.Add(-726);
-//arrayList.InsertSort();
+//arrayList.SelectionSort();
 arrayList.Sort();
 Console.ReadLine();
