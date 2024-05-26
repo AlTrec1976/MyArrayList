@@ -196,15 +196,15 @@ namespace MyArrayList.Library
                     var tempIndex = (_array[j] % (int)Math.Pow(10, i + 1)) / (int)Math.Pow(10, i);
                     if (tempIndex < 0)
                     {
+                        lists[0].Add(_array[j]);
                         var tmpInd = lists[0].Count-1;
                         tmpInd = tmpInd < 0 ? 0 : tmpInd;
-                        lists[0].Add(_array[j]);
                         
                         while (tmpInd > 0 && _array[j] <= lists[0][tmpInd-1].GetHashCode())
                         {
-                            var tempVar = lists[0][tmpInd].GetHashCode();
-                            lists[0][tmpInd + 1] = tempVar;
-                            lists[0][tmpInd] = _array[j];
+                            var tempVar = lists[0][tmpInd-1].GetHashCode();
+                            lists[0][tmpInd] = tempVar;
+                            lists[0][tmpInd-1] = _array[j];
                             tmpInd--;
                         }
                     }
