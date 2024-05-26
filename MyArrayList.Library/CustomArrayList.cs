@@ -133,7 +133,7 @@ namespace MyArrayList.Library
         /// <summary>
         /// Сортировка выбором. Сложность: худшая - О((n^2)/2), средняя - O((n^2)/4)
         /// </summary>
-        public void InsertSort()
+        public void SelectionSort()
         {
             for (int i = 1; i < Count; i++)
             {
