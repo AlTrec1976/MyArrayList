@@ -131,7 +131,7 @@ namespace MyArrayList.Library
         }
 
         /// <summary>
-        /// Сортировка выбором. Сложность: худшая - О(n^2), средняя - O(n*logn)
+        /// Сортировка выбором. Сложность: худшая - О((n^2)/2), средняя - O((n^2)/4)
         /// </summary>
         public void Sort()
         {
@@ -179,9 +179,9 @@ namespace MyArrayList.Library
         /// </summary>
         public void RadixSort() 
         {
-            ArrayList[] lists = new ArrayList[Count];
+            ArrayList[] lists = new ArrayList[10];
             
-            for (int i = 0; i < Count; i++)
+            for (int i = 0; i < 10; i++)
             {
                 lists[i] = new ArrayList();
             }
@@ -193,14 +193,14 @@ namespace MyArrayList.Library
                 //Распределяем значения массива по спискам
                 for(int j = 0; j < Count; j++)
                 {
-                    int tempIndex = (_array[j] % (int)Math.Pow(Count, i + 1)) / (int)Math.Pow(Count, i);
+                    int tempIndex = (_array[j] % (int)Math.Pow(10, i + 1)) / (int)Math.Pow(10, i);
                     lists[tempIndex].Add(_array[j]);
                 }
                 
                 //Собираем отсортированные значения в массив
                 int index = 0;
                 
-                for(int j = 0; j < Count; j++) 
+                for(int j = 0; j < 10; j++) 
                 {
                     for(int k = 0; k < lists[j].Count; k++) 
                     {
@@ -209,7 +209,7 @@ namespace MyArrayList.Library
                 }
 
                 //Очищаем списки для последующего заполнения
-                for (int j = 0; j < Count; j++)
+                for (int j = 0; j < 10; j++)
                 {
                     lists[j].Clear();
                 }
