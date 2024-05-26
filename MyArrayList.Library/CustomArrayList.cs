@@ -1,4 +1,6 @@
-﻿namespace MyArrayList.Library
+﻿using System.Collections;
+
+namespace MyArrayList.Library
 {
     public class CustomArrayList
     {
@@ -73,7 +75,7 @@
 
             int[] tmpArray = new int[_array.Length];
             tmpArray[index] = element;
-            
+
             for (int i = 0; i < index; i++)
             {
                 tmpArray[i] = _array[i];
@@ -85,7 +87,7 @@
             }
 
             _array = tmpArray;
-            
+
             if (_array.Length == Count)
             {
                 _length = (int)(_array.Length * 1.5);
@@ -98,8 +100,8 @@
         /// </summary>
         public void Add(int[] elements, int index)
         {
-            Count+=elements.Length;
-                        
+            Count += elements.Length;
+
             if (_array.Length < Count)
             {
                 _length = (int)((_array.Length + elements.Length) * 1.5);
@@ -114,7 +116,7 @@
                 tmpArray[i] = elements[indexElement];
                 indexElement++;
             }
-            
+
             for (int i = 0; i < index; i++)
             {
                 tmpArray[i] = _array[i];
@@ -129,26 +131,91 @@
         }
 
         /// <summary>
-        /// Сортировка любым алгоритмом (кроме пузырькового)
+        /// Сортировка выбором. Сложность: худшая - О(n^2), средняя - O(n*logn)
         /// </summary>
         public void Sort()
         {
-            for (int i = 1; i < Count; i++  )
+            for (int i = 1; i < Count; i++)
             {
                 int j = default;
                 int tmpValue = _array[i];
+
                 for (j = i - 1; j >= 0; j--)
                 {
                     if (_array[j] <= tmpValue)
                     {
                         break;
                     }
+
                     _array[j + 1] = _array[j];
                 }
+
                 _array[j + 1] = tmpValue;
             }
         }
+        
+        private int MaxRadixCount()
+        {
+            var result = 0;
 
+            foreach (var item in _array)
+            {
+                var radix = 0;
+                var number = item;
+                while (number > 0)
+                {
+                    radix++;
+                    number /= 10;
+                }
+
+                result = result > radix ? result : radix;
+            }
+            
+            return result;
+        }
+        
+        /// <summary>
+        /// Сортировка поразрядная LSD. Сложность всегда O(n*logn)
+        /// </summary>
+        public void RadixSort() 
+        {
+            ArrayList[] lists = new ArrayList[Count];
+            
+            for (int i = 0; i < Count; i++)
+            {
+                lists[i] = new ArrayList();
+            }
+
+            var radix = MaxRadixCount();
+            
+            for(int i = 0; i < radix; i++) 
+            {
+                //Распределяем значения массива по спискам
+                for(int j = 0; j < Count; j++)
+                {
+                    int tempIndex = (_array[j] % (int)Math.Pow(Count, i + 1)) / (int)Math.Pow(Count, i);
+                    lists[tempIndex].Add(_array[j]);
+                }
+                
+                //Собираем отсортированные значения в массив
+                int index = 0;
+                
+                for(int j = 0; j < Count; j++) 
+                {
+                    for(int k = 0; k < lists[j].Count; k++) 
+                    {
+                        _array[index++] = (int)lists[j][k];
+                    }
+                }
+
+                //Очищаем списки для последующего заполнения
+                for (int j = 0; j < Count; j++)
+                {
+                    lists[j].Clear();
+                }
+            }
+        }
+        
         /// <summary>
         /// Изменение размера массива
         /// </summary>
@@ -156,13 +223,12 @@
         {
             int[] tmpList = new int[newSize];
 
-            for (int i = 0; i < _array.Length; i++)
+            for (int i = 0; i < Count; i++)
             {
                 tmpList[i] = _array[i];
             }
 
             _array = tmpList;
         }
-    }    
+    }
 }
-

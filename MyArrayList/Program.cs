@@ -36,7 +36,6 @@ arrayList.Add(18);
 arrayList.Add(21);
 arrayList.Add(22);
 arrayList.Add(26);
-arrayList.Sort();
+//arrayList.Sort();
+arrayList.RadixSort();
 Console.ReadLine();
-
-
