@@ -194,7 +194,25 @@ namespace MyArrayList.Library
                 for(int j = 0; j < Count; j++)
                 {
                     int tempIndex = (_array[j] % (int)Math.Pow(10, i + 1)) / (int)Math.Pow(10, i);
-                    lists[tempIndex].Add(_array[j]);
+                    int tempVar = default;
+                    if (tempIndex < 0)
+                    {
+                        var tmpInd = lists[0].Count-1;
+                        tmpInd = tmpInd < 0 ? 0 : tmpInd;
+                        lists[0].Add(_array[j]);
+                        if (tmpInd > 0 && _array[j] < lists[0][tmpInd-1].GetHashCode())
+                        {
+                            tempVar = lists[0][tmpInd].GetHashCode();
+                            lists[0][tmpInd + 1] = tempVar;
+                            lists[0][tmpInd] = _array[j];
+                        }
+                        
+                    }
+                    else
+                    {
+                        lists[tempIndex].Add(_array[j]);
+                        
+                    }
                 }
                 
                 //Собираем отсортированные значения в массив
