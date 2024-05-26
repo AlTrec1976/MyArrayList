@@ -133,7 +133,7 @@ namespace MyArrayList.Library
         /// <summary>
         /// Сортировка выбором. Сложность: худшая - О((n^2)/2), средняя - O((n^2)/4)
         /// </summary>
-        public void Sort()
+        public void InsertSort()
         {
             for (int i = 1; i < Count; i++)
             {
@@ -177,7 +177,7 @@ namespace MyArrayList.Library
         /// <summary>
         /// Сортировка поразрядная LSD. Сложность всегда O(n*logn)
         /// </summary>
-        public void RadixSort() 
+        public void Sort() 
         {
             ArrayList[] lists = new ArrayList[10];
             
