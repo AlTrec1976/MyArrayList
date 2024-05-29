@@ -11,10 +11,15 @@ arrayList[arrayList.Count-2] = 455;
 arrayList.Add(arr2);
 arrayList.Add(arr1, 5);
 //arrayList.RadixSort();
-arrayList.Sort();
+var sum = arrayList[arrayList.Count - 2] - arrayList[3];
+//arrayList.Sort();
+arrayList.RadixSort();
 
 CustomArrayList<string> strList = new CustomArrayList<string>(new string[] { "папа", "Дочь", "сын", "брат", "мама", "баба" });
-strList.Sort();
+
+var fam = strList[1] + strList[3];
+//strList.Sort();
+strList.RadixSort();
 
 foreach (var item in arrayList)
 {
