@@ -182,15 +182,6 @@ namespace MyArrayList.Library
         }
 
             public int Value { get; set; }
-         
-        /*
-        public static Counter<T> operator +(Counter<int> counter1, Counter<int> counter2)
-        {
-            var counter = new Counter<int>();
-            counter.Value = counter1.Value + counter2.Value;
-            return counter;
-        }
-        */
 
         /// <summary>
         /// Поиск максимального разряда
@@ -220,7 +211,7 @@ namespace MyArrayList.Library
         }
 
         /// <summary>
-        /// Сортировка поразрядная LSD. Сложность всегда O(n*logn)
+        /// Сортировка чисел поразрядная LSD. Сложность всегда O(n*logn)
         /// </summary>
         public void RadixSort()
         {
@@ -232,7 +223,8 @@ namespace MyArrayList.Library
             }
 
             var radix = MaxRadixCount();
-            if (radix==0)
+            
+            if (radix == 0)
             {
                 return;
             }
@@ -284,8 +276,6 @@ namespace MyArrayList.Library
                 }
             }
         }
-    /*
-        */
 
         /// <summary>
         /// Очистка списка
@@ -368,20 +358,4 @@ namespace MyArrayList.Library
             // TODO release managed resources here
         }
     }
-
-    /*
-    public class Sum(int val1, int val2, int res) : IAdditionOperators<int>
-    {
-        private int left = default;
-        private int right = default;
-        
-        public int Val1 { get; set; }
-        public int Val2 { get; set; }
-        public int Res { get; set; }
-        public int operator +(int left, int right)
-        {
-            return left + right;
-        }
-    }
-*/
 }
