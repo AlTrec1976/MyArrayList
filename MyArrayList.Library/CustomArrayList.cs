@@ -1,43 +1,69 @@
 ﻿using System.Collections;
+using System.Numerics;
 
 namespace MyArrayList.Library
 {
-    public class CustomArrayList
+    public class CustomArrayList<T> where T : IComparable
     {
-        private int[] _array;
+        private T[] _array;
         private int _length;
 
+        /// <summary>
+        /// Длина списка
+        /// </summary>
         public int Count { get; private set; }
 
         public CustomArrayList()
         {
-            _array = new int[4];
+            _array = new T[4];
             _length = _array.Length;
         }
 
-        public CustomArrayList(int element)
+        public CustomArrayList(T element)
         {
-            _array = new int[4];
+            _array = new T[4];
             _array[0] = element;
 
             _length = _array.Length;
             Count++;
         }
 
-        public CustomArrayList(int[] elements)
+        public CustomArrayList(T[] elements)
         {
             Count = elements.Length;
-            _array = new int[elements.Length];
+            _array = new T[elements.Length];
             _array = elements;
             _length = (int)(_array.Length * 1.5);
 
             Resize(_length);
         }
 
+        public T this[int index]
+        {
+            get
+            {
+                if (index < 0 || index > Count - 1)
+                {
+                    throw new IndexOutOfRangeException();
+                }
+
+                return _array[index];
+            }
+            set
+            {
+                if (index < 0 || index > Count - 1)
+                {
+                    throw new IndexOutOfRangeException();
+                }
+
+                _array[index] = value;
+            }
+        }
+
         /// <summary>
         /// Добавление одного элемента
         /// </summary>
-        public void Add(int element)
+        public void Add(T element)
         {
             _array[Count] = element;
             Count++;
@@ -52,7 +78,7 @@ namespace MyArrayList.Library
         /// <summary>
         /// Добавление массива элементов
         /// </summary>
-        public void Add(int[] elements)
+        public void Add(T[] elements)
         {
             var elementsLength = Count + elements.Length;
             var oldArrayCount = Count;
@@ -69,11 +95,11 @@ namespace MyArrayList.Library
         /// <summary>
         /// Добавление элемента по индексу
         /// </summary>
-        public void Add(int element, int index)
+        public void Add(T element, int index)
         {
             Count++;
 
-            int[] tmpArray = new int[_array.Length];
+            T[] tmpArray = new T[_array.Length];
             tmpArray[index] = element;
 
             for (int i = 0; i < index; i++)
@@ -98,7 +124,7 @@ namespace MyArrayList.Library
         /// <summary>
         /// Добавление массива элементов по индексу
         /// </summary>
-        public void Add(int[] elements, int index)
+        public void Add(T[] elements, int index)
         {
             Count += elements.Length;
 
@@ -108,7 +134,7 @@ namespace MyArrayList.Library
                 Resize(_length);
             }
 
-            int[] tmpArray = new int[_array.Length];
+            T[] tmpArray = new T[_array.Length];
             int indexElement = default;
 
             for (int i = index; i < elements.Length + index; i++)
@@ -133,16 +159,16 @@ namespace MyArrayList.Library
         /// <summary>
         /// Сортировка выбором. Сложность: худшая - О((n^2)/2), средняя - O((n^2)/4)
         /// </summary>
-        public void SelectionSort()
+        public void Sort()
         {
             for (int i = 1; i < Count; i++)
             {
                 int j = default;
-                int tmpValue = _array[i];
+                T tmpValue = _array[i];
 
                 for (j = i - 1; j >= 0; j--)
                 {
-                    if (_array[j] <= tmpValue)
+                    if (_array[j].CompareTo(tmpValue) < 0)
                     {
                         break;
                     }
@@ -153,53 +179,58 @@ namespace MyArrayList.Library
                 _array[j + 1] = tmpValue;
             }
         }
-        
+
+        /*
+        /// <summary>
+        /// Поиск максимального разряда
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         private int MaxRadixCount()
         {
             var result = 0;
 
-            foreach (var item in _array)
+            for (int i = 0; i < _array.Length; i++)
             {
                 var radix = 0;
-                var number = item;
-                while (number > 0)
+                while (_array[i].CompareTo(0) > 0)
                 {
                     radix++;
-                    number /= 10;
+                    _array[i] /= 10;
                 }
 
                 result = result > radix ? result : radix;
             }
-            
+
             return result;
         }
-        
+
         /// <summary>
         /// Сортировка поразрядная LSD. Сложность всегда O(n*logn)
         /// </summary>
-        public void Sort() 
+        public void RadixSort()
         {
-            ArrayList[] lists = new ArrayList[10];
-            
+            CustomArrayList<T>[] lists = new CustomArrayList<T>[10];
+
             for (int i = 0; i < 10; i++)
             {
-                lists[i] = new ArrayList();
+                lists[i] = new CustomArrayList<T>();
             }
 
             var radix = MaxRadixCount();
-            
-            for(int i = 0; i < radix; i++) 
+
+            for(int i = 0; i < radix; i++)
             {
                 //Распределяем значения массива по спискам
                 for(int j = 0; j < Count; j++)
                 {
-                    var tempIndex = (_array[j] % (int)Math.Pow(10, i + 1)) / (int)Math.Pow(10, i);
+                    int tempIndex = (_array[j] % (int)Math.Pow(10, i + 1)) / (int)Math.Pow(10, i);
                     if (tempIndex < 0)
                     {
                         lists[0].Add(_array[j]);
                         var tmpInd = lists[0].Count-1;
                         tmpInd = tmpInd < 0 ? 0 : tmpInd;
-                        
+
                         while (tmpInd > 0 && _array[j] <= lists[0][tmpInd-1].GetHashCode())
                         {
                             var tempVar = lists[0][tmpInd-1].GetHashCode();
@@ -211,18 +242,18 @@ namespace MyArrayList.Library
                     else
                     {
                         lists[tempIndex].Add(_array[j]);
-                        
+
                     }
                 }
-                
+
                 //Собираем отсортированные значения в массив
                 int index = 0;
-                
-                for(int j = 0; j < 10; j++) 
+
+                for(int j = 0; j < 10; j++)
                 {
-                    for(int k = 0; k < lists[j].Count; k++) 
+                    for(int k = 0; k < lists[j].Count; k++)
                     {
-                        _array[index++] = (int)lists[j][k];
+                        _array[index++] = lists[j][k];
                     }
                 }
 
@@ -233,13 +264,24 @@ namespace MyArrayList.Library
                 }
             }
         }
+        */
         
+        /// <summary>
+        /// Очистка списка
+        /// </summary>
+        public void Clear()
+        {
+            _length = 4;
+            Count = 0;
+            Resize(_length);
+        }
+
         /// <summary>
         /// Изменение размера массива
         /// </summary>
         private void Resize(int newSize)
         {
-            int[] tmpList = new int[newSize];
+            T[] tmpList = new T[newSize];
 
             for (int i = 0; i < Count; i++)
             {
@@ -247,6 +289,62 @@ namespace MyArrayList.Library
             }
 
             _array = tmpList;
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            return new CustomArrayListEnumerator<T>(_array, Count);
+        }
+    }
+
+    public class CustomArrayListEnumerator<T> : IEnumerator<T>
+    {
+        private T[] _array;
+        private int _count;
+        private int _position = -1;
+
+        public CustomArrayListEnumerator(T[] array, int count)
+        {
+            _array = array;
+            _count = count;
+        }
+
+        public T Current
+        {
+            get
+            {
+                if (_position == -1 || _position >= _count)
+                {
+                    throw new ArgumentException();
+                }
+
+                return _array[_position];
+            }
+        }
+
+        object IEnumerator.Current => Current;
+
+        public bool MoveNext()
+        {
+            if (_position < _count - 1)
+            {
+                _position++;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public void Reset()
+        {
+            _position = -1;
+        }
+
+        public void Dispose()
+        {
+            // TODO release managed resources here
         }
     }
 }

@@ -2,74 +2,32 @@
 using MyArrayList.Library;
 
 int[] arr = new int[] { 32, 120, 45 };
-CustomArrayList arrayList = new CustomArrayList(arr);
+CustomArrayList<int> arrayList = new CustomArrayList<int>(arr);
 int[] arr1 = new int[] { 102, 212, 952 };
 int[] arr2 = new int[] { -702, -422, -862 };
 
-arrayList.Add(24);
-arrayList.Add(-20);
-arrayList.Add(14);
-arrayList.Add(11);
-arrayList.Add(arr1);
-arrayList.Add(-223);
-arrayList.Add(6);
-arrayList.Add(7);
-arrayList.Add(5);
-arrayList.Add(10);
-arrayList.Add(3);
-arrayList.Add(15);
-arrayList.Add(19);
-arrayList.Add(13);
-arrayList.Add(445);
-arrayList.Add(23);
-arrayList.Add(-4);
-arrayList.Add(12);
-arrayList.Add(8);
-arrayList.Add(25);
-arrayList.Add(2);
-arrayList.Add(9);
-arrayList.Add(arr2, 20);
-arrayList.Add(1);
-arrayList.Add(777, 10);
-arrayList.Add(16);
-arrayList.Add(17);
-arrayList.Add(18);
-arrayList.Add(21);
-arrayList.Add(22);
-arrayList.Add(26);
-arrayList.Add(-726);
-arrayList.Add(24);
-arrayList.Add(-20);
-arrayList.Add(14);
-arrayList.Add(11);
+var x = arrayList[arrayList.Count - 1];
+arrayList[arrayList.Count-2] = 455;
 arrayList.Add(arr2);
-arrayList.Add(-223);
-arrayList.Add(6);
-arrayList.Add(7);
-arrayList.Add(5);
-arrayList.Add(10);
-arrayList.Add(3);
-arrayList.Add(15);
-arrayList.Add(19);
-arrayList.Add(13);
-arrayList.Add(445);
-arrayList.Add(23);
-arrayList.Add(-4);
-arrayList.Add(12);
-arrayList.Add(8);
-arrayList.Add(25);
-arrayList.Add(2);
-arrayList.Add(9);
-arrayList.Add(arr1, 35);
-arrayList.Add(1);
-arrayList.Add(777, 52);
-arrayList.Add(16);
-arrayList.Add(17);
-arrayList.Add(18);
-arrayList.Add(21);
-arrayList.Add(22);
-arrayList.Add(26);
-arrayList.Add(-726);
-//arrayList.SelectionSort();
+arrayList.Add(arr1, 5);
+//arrayList.RadixSort();
 arrayList.Sort();
-Console.ReadLine();
+
+CustomArrayList<string> strList = new CustomArrayList<string>(new string[] { "папа", "Дочь", "сын", "брат", "мама", "баба" });
+strList.Sort();
+
+foreach (var item in arrayList)
+{
+    Console.WriteLine(item);
+}
+
+    Console.WriteLine();
+
+foreach (var item in strList)
+{
+    Console.WriteLine(item);
+}
+/**/
+
+strList.Clear();
+arrayList.Clear();
