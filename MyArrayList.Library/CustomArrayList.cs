@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Diagnostics.Metrics;
 using System.Numerics;
 
 namespace MyArrayList.Library
@@ -180,7 +181,17 @@ namespace MyArrayList.Library
             }
         }
 
+            public int Value { get; set; }
+         
         /*
+        public static Counter<T> operator +(Counter<int> counter1, Counter<int> counter2)
+        {
+            var counter = new Counter<int>();
+            counter.Value = counter1.Value + counter2.Value;
+            return counter;
+        }
+        */
+
         /// <summary>
         /// Поиск максимального разряда
         /// </summary>
@@ -189,14 +200,17 @@ namespace MyArrayList.Library
         private int MaxRadixCount()
         {
             var result = 0;
+            var tmpVal = 0;
 
-            for (int i = 0; i < _array.Length; i++)
+            for (int i = 0; i < Count; i++)
             {
                 var radix = 0;
-                while (_array[i].CompareTo(0) > 0)
+                var tmp = int.TryParse(_array[i].ToString(), out tmpVal);
+                
+                while (tmp && tmpVal > 0)
                 {
                     radix++;
-                    _array[i] /= 10;
+                    tmpVal /= 10;
                 }
 
                 result = result > radix ? result : radix;
@@ -210,38 +224,43 @@ namespace MyArrayList.Library
         /// </summary>
         public void RadixSort()
         {
-            CustomArrayList<T>[] lists = new CustomArrayList<T>[10];
+            CustomArrayList<int>[] lists = new CustomArrayList<int>[10];
 
             for (int i = 0; i < 10; i++)
             {
-                lists[i] = new CustomArrayList<T>();
+                lists[i] = new CustomArrayList<int>();
             }
 
             var radix = MaxRadixCount();
+            if (radix==0)
+            {
+                return;
+            }
 
             for(int i = 0; i < radix; i++)
             {
                 //Распределяем значения массива по спискам
                 for(int j = 0; j < Count; j++)
                 {
-                    int tempIndex = (_array[j] % (int)Math.Pow(10, i + 1)) / (int)Math.Pow(10, i);
+                    var tmpVal = int.Parse(_array[j].ToString());
+                    int tempIndex = (tmpVal % (int)Math.Pow(10, i + 1)) / (int)Math.Pow(10, i);
                     if (tempIndex < 0)
                     {
-                        lists[0].Add(_array[j]);
+                        lists[0].Add(tmpVal);
                         var tmpInd = lists[0].Count-1;
                         tmpInd = tmpInd < 0 ? 0 : tmpInd;
 
-                        while (tmpInd > 0 && _array[j] <= lists[0][tmpInd-1].GetHashCode())
+                        while (tmpInd > 0 && tmpVal <= lists[0][tmpInd-1].GetHashCode())
                         {
                             var tempVar = lists[0][tmpInd-1].GetHashCode();
                             lists[0][tmpInd] = tempVar;
-                            lists[0][tmpInd-1] = _array[j];
+                            lists[0][tmpInd-1] = tmpVal;
                             tmpInd--;
                         }
                     }
                     else
                     {
-                        lists[tempIndex].Add(_array[j]);
+                        lists[tempIndex].Add(tmpVal);
 
                     }
                 }
@@ -253,7 +272,8 @@ namespace MyArrayList.Library
                 {
                     for(int k = 0; k < lists[j].Count; k++)
                     {
-                        _array[index++] = lists[j][k];
+                        var tmp = (object)lists[j][k];
+                        _array[index++] = (T)tmp;
                     }
                 }
 
@@ -264,8 +284,9 @@ namespace MyArrayList.Library
                 }
             }
         }
+    /*
         */
-        
+
         /// <summary>
         /// Очистка списка
         /// </summary>
@@ -290,7 +311,7 @@ namespace MyArrayList.Library
 
             _array = tmpList;
         }
-
+        
         public IEnumerator<T> GetEnumerator()
         {
             return new CustomArrayListEnumerator<T>(_array, Count);
@@ -347,4 +368,20 @@ namespace MyArrayList.Library
             // TODO release managed resources here
         }
     }
+
+    /*
+    public class Sum(int val1, int val2, int res) : IAdditionOperators<int>
+    {
+        private int left = default;
+        private int right = default;
+        
+        public int Val1 { get; set; }
+        public int Val2 { get; set; }
+        public int Res { get; set; }
+        public int operator +(int left, int right)
+        {
+            return left + right;
+        }
+    }
+*/
 }
