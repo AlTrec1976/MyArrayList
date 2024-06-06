@@ -26,7 +26,7 @@ foreach (var item in arrayList)
     Console.WriteLine(item);
 }
 
-    Console.WriteLine();
+Console.WriteLine();
 
 foreach (var item in strList)
 {
