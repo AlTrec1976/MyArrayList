@@ -1,19 +1,25 @@
 ﻿using System.Collections;
 using System.Diagnostics.Metrics;
 using System.Numerics;
+using MyArrayList.Library;
 
 namespace MyArrayList.Library
 {
     public class CustomArrayList<T> where T : IComparable
     {
+        #region Поля
         private T[] _array;
         private int _length;
+        #endregion
 
+        #region Свойства
         /// <summary>
         /// Длина списка
         /// </summary>
         public int Count { get; private set; }
+        #endregion
 
+        #region Конструкторы
         public CustomArrayList()
         {
             _array = new T[4];
@@ -38,7 +44,9 @@ namespace MyArrayList.Library
 
             Resize(_length);
         }
+        #endregion
 
+        #region Индексатор
         public T this[int index]
         {
             get
@@ -60,7 +68,9 @@ namespace MyArrayList.Library
                 _array[index] = value;
             }
         }
+        #endregion
 
+        #region Добавление элементов
         /// <summary>
         /// Добавление одного элемента
         /// </summary>
@@ -156,6 +166,7 @@ namespace MyArrayList.Library
 
             _array = tmpArray;
         }
+        #endregion
 
         /// <summary>
         /// Сортировка выбором. Сложность: худшая - О((n^2)/2), средняя - O((n^2)/4)
@@ -181,100 +192,12 @@ namespace MyArrayList.Library
             }
         }
 
-            public int Value { get; set; }
-
-        /// <summary>
-        /// Поиск максимального разряда
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        private int MaxRadixCount()
+        public void RadixSort<T>() where T : struct
         {
-            var result = 0;
-            var tmpVal = 0;
+            //CustomArrayList<int> array = new CustomArrayList<int>((int[])(object)_array);
+            //var array = (int[])(object)_array;
 
-            for (int i = 0; i < Count; i++)
-            {
-                var radix = 0;
-                var tmp = int.TryParse(_array[i].ToString(), out tmpVal);
-                
-                while (tmp && tmpVal > 0)
-                {
-                    radix++;
-                    tmpVal /= 10;
-                }
-
-                result = result > radix ? result : radix;
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Сортировка чисел поразрядная LSD. Сложность всегда O(n*logn)
-        /// </summary>
-        public void RadixSort()
-        {
-            CustomArrayList<int>[] lists = new CustomArrayList<int>[10];
-
-            for (int i = 0; i < 10; i++)
-            {
-                lists[i] = new CustomArrayList<int>();
-            }
-
-            var radix = MaxRadixCount();
-            
-            if (radix == 0)
-            {
-                return;
-            }
-
-            for(int i = 0; i < radix; i++)
-            {
-                //Распределяем значения массива по спискам
-                for(int j = 0; j < Count; j++)
-                {
-                    var tmpVal = int.Parse(_array[j].ToString());
-                    int tempIndex = (tmpVal % (int)Math.Pow(10, i + 1)) / (int)Math.Pow(10, i);
-                    if (tempIndex < 0)
-                    {
-                        lists[0].Add(tmpVal);
-                        var tmpInd = lists[0].Count-1;
-                        tmpInd = tmpInd < 0 ? 0 : tmpInd;
-
-                        while (tmpInd > 0 && tmpVal <= lists[0][tmpInd-1].GetHashCode())
-                        {
-                            var tempVar = lists[0][tmpInd-1].GetHashCode();
-                            lists[0][tmpInd] = tempVar;
-                            lists[0][tmpInd-1] = tmpVal;
-                            tmpInd--;
-                        }
-                    }
-                    else
-                    {
-                        lists[tempIndex].Add(tmpVal);
-
-                    }
-                }
-
-                //Собираем отсортированные значения в массив
-                int index = 0;
-
-                for(int j = 0; j < 10; j++)
-                {
-                    for(int k = 0; k < lists[j].Count; k++)
-                    {
-                        var tmp = (object)lists[j][k];
-                        _array[index++] = (T)tmp;
-                    }
-                }
-
-                //Очищаем списки для последующего заполнения
-                for (int j = 0; j < 10; j++)
-                {
-                    lists[j].Clear();
-                }
-            }
+            Sorting.SortRadix((int[])(object)_array, Count);
         }
 
         /// <summary>
@@ -284,7 +207,7 @@ namespace MyArrayList.Library
         {
             _length = 4;
             Count = 0;
-            Resize(_length);
+            _array = new T[_length];
         }
 
         /// <summary>
@@ -356,6 +279,103 @@ namespace MyArrayList.Library
         public void Dispose()
         {
             // TODO release managed resources here
+        }
+    }
+}
+
+interface IRadixSort
+{
+    public void RadixSort<T>();
+}
+
+static class Sorting
+{
+    /// <summary>
+    /// Поиск максимального разряда
+    /// </summary>
+    /// <typeparam name="CustomArrayList<int>">CustomArrayList</typeparam>
+    /// <returns>Число разрядов</returns>
+    private static int MaxRadixCount(int[] array, int count)
+    {
+        var result = 0;
+        for (int i = 0; i < count; i++)
+        {
+            var radix = 0;
+            var tmpVal = array[i];
+            
+            while (tmpVal > 0)
+            {
+                radix++;
+                tmpVal /= 10;
+            }
+
+            result = result > radix ? result : radix;
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Сортировка чисел поразрядная LSD. Сложность всегда O(n*logn)
+    /// </summary>
+    public static void SortRadix(int[] array, int count)
+    {
+        CustomArrayList<int>[] lists = new CustomArrayList<int>[10];
+
+        for (int i = 0; i < 10; i++)
+        {
+            lists[i] = new CustomArrayList<int>();
+        }
+
+        var radix = MaxRadixCount(array, count);
+        
+        if (radix == 0)
+        {
+            return;
+        }
+
+        for(int i = 0; i < radix; i++)
+        {
+            //Распределяем значения массива по спискам
+            for(int j = 0; j < count; j++)
+            {
+                int tempIndex = (array[j] % (int)Math.Pow(10, i + 1)) / (int)Math.Pow(10, i);
+                if (tempIndex < 0)
+                {
+                    lists[0].Add(array[j]);
+                    var tmpInd = lists[0].Count-1;
+                    tmpInd = tmpInd < 0 ? 0 : tmpInd;
+
+                    while (tmpInd > 0 && array[j] <= lists[0][tmpInd-1])
+                    {
+                        lists[0][tmpInd] = lists[0][tmpInd-1];
+                        lists[0][tmpInd-1] = array[j];
+                        tmpInd--;
+                    }
+                }
+                else
+                {
+                    lists[tempIndex].Add(array[j]);
+
+                }
+            }
+
+            //Собираем отсортированные значения в массив
+            int index = 0;
+
+            for(int j = 0; j < 10; j++)
+            {
+                for(int k = 0; k < lists[j].Count; k++)
+                {
+                    array[index++] = lists[j][k];
+                }
+            }
+
+            //Очищаем списки для последующего заполнения
+            for (int j = 0; j < 10; j++)
+            {
+                lists[j].Clear();
+            }
         }
     }
 }
